@@ -29,6 +29,7 @@ def filter(files: list[str]):
 
 
 def choose_workdir():
+    ui.files_list.clear()
     global workdir
     workdir =QFileDialog.getExistingDirectory()
     files_list = os.listdir(workdir)
@@ -65,13 +66,12 @@ class ImageProcessor():
             ui.image_lb.show()
     def saveImage(self):
         save_dir_path = os.path.join(workdir, self.modified_subfolder)
-        if os.path.isdir(save_dir_path):
+        if not os.path.isdir(save_dir_path):
             os.mkdir(save_dir_path)
 
-        # self.full_path = os.path.join(save_dir_path, self.filename)
-        # self.image.save(self.full_path)
+        
         full_path = os.path.join(save_dir_path, self.filename)
-        self.image.save(self.full_path)
+        self.image.save(full_path)
 
     def makeBW(self) :
         self.image =  self.image.convert("L")
@@ -79,9 +79,36 @@ class ImageProcessor():
         modified_path = os.path.join(workdir,self.modified_subfolder,self.filename)
         self.full_path = modified_path
         self.showImage()
-    ...
-    ...
-    ...
+    
+    def makeFlip(self):
+        self.image =  self.image.transpose(Image.FLIP_LEFT_RIGHT)
+        self.saveImage()
+        modified_path = os.path.join(workdir,self.modified_subfolder,self.filename)
+        self.full_path = modified_path
+        self.showImage()
+
+    def makeTurnLeft(self):
+        self.image = self.image.transpose(Image.ROTATE_90)
+        self.saveImage()
+        modified_path = os.path.join(workdir,self.modified_subfolder,self.filename)
+        self.ful_path = modified_path
+        self.showImage()
+
+    def makeTurnRigh(self):
+        self.image = self.image.transpose(Image.ROTATE_270)
+        self.saveImage()
+        modified_path = os.path.join(workdir,self.modified_subfolder,self.filename)
+        self.ful_path = modified_path
+        self.showImage()
+
+
+    def makeSharpen(self):
+        self.image = self.image.filter(ImageFilter.SHARPEN)
+        self.saveImage()
+        modified_path = os.path.join(workdir,self.modified_subfolder,self.filename)
+        self.ful_path = modified_path
+        self.showImage()
+
 
 ip = ImageProcessor()
 
@@ -95,13 +122,13 @@ ui.files_list.currentItemChanged.connect(show_choosen_image)
 
 ui.bw_btn.clicked.connect(ip.makeBW)
 
+ui.mirror_btn.clicked.connect(ip.makeFlip)
 
+ui.left_btn.clicked.connect(ip.makeTurnLeft)
 
+ui.right_btn.clicked.connect(ip.makeTurnRigh)
 
-
-
-
-
+ui.sharp_btn.clicked.connect(ip.makeSharpen)
 
 
 
